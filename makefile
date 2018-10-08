@@ -49,7 +49,7 @@ $(BIN): $(C_OBJECT_FILES)
 	$(LD) -shared $(C_OBJECT_FILES) $(LDFLAGS) -o $@ $(LIBS)
 	
 %.o: %.c
-	$(CC) $(LUSB_INC) -c -MMD -MP $< -o $@ $(CFLAGS)
+	$(CC) -Wall $(LUSB_INC) -c -MMD -MP $< -o $@ $(CFLAGS)
 
 # Let make read the dependency files and handle them.
 -include $(DEPS)
