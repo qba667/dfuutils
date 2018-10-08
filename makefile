@@ -7,19 +7,27 @@ NAME  := dfuutils
 
 
 ifeq ($(OS), Windows_NT)
+
 	RM = del /Q
 	BIN   := $(NAME).dll
+	CFLAGS    := 
+	LUSB_INC  := -I../libusb-1.0.22/include
+	LIBS      := -L../libusb-1.0.22/MinGW32/dll -llibusb-1.0
+	LDFLAGS   := -Wl,--output-def,$(NAME).def,--out-implib,$(NAME).a
 else
 	RM := rm -rf
 	BIN   := $(NAME).so
+	LUSB_INC  := 
+	LIBS      := -lusb-1.0
+	LDFLAGS   :=
+	CFLAGS    := -fPIC
 endif
 
 # Toolchain arguments.
-CFLAGS    := 
+
 CXXFLAGS  := $(CFLAGS)
-LDFLAGS   := 
-LUSB_INC  := -I../libusb-1.0.22/include
-LIBS      := -L../libusb-1.0.22/MinGW32/dll -llibusb-1.0
+
+
 
 SOURCES = intel_hex dfu stm32mem
 
@@ -38,7 +46,7 @@ clean:
 rebuild: clean all
 
 $(BIN): $(C_OBJECT_FILES)
-	$(LD) -shared $(C_OBJECT_FILES) $(LDFLAGS) -o $@ $(LIBS) -Wl,--output-def,$(NAME).def,--out-implib,$@.a
+	$(LD) -shared $(C_OBJECT_FILES) $(LDFLAGS) -o $@ $(LIBS)
 	
 %.o: %.c
 	$(CC) $(LUSB_INC) -c -MMD -MP $< -o $@ $(CFLAGS)
