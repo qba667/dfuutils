@@ -1,13 +1,18 @@
-
 # Makefile
 
 CC := gcc
 LD := g++
-RM := rm -rf
 
-# The output executable.
 NAME  := dfuutils
-BIN   := $(NAME).dll
+
+
+ifeq ($(OS), Windows_NT)
+	RM = del /Q
+	BIN   := $(NAME).dll
+else
+	RM := rm -rf
+	BIN   := $(NAME).so
+endif
 
 # Toolchain arguments.
 CFLAGS    := 
