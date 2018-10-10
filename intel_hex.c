@@ -37,6 +37,7 @@
 #include <string.h>
 
 #include "intel_hex.h"
+#include "dfu.h"
 
 struct intel_record {
     uint8_t count;      // single byte count
