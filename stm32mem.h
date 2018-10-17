@@ -97,21 +97,21 @@ enum return_codes_enum {
 #define STM32_READ_PROT_ERROR   -10
 
 
-int32_t stm32_erase_flash( dfu_device_t *device, dfu_bool quiet );
+DFUUTILS_API int32_t stm32_erase_flash( dfu_device_t *device, dfu_bool quiet );
   /*  mass erase flash
    *  device  - the usb_dev_handle to communicate with
    *  returns status DFU_STATUS_OK if ok, anything else on error
    */
 
-int32_t stm32_page_erase( dfu_device_t *device, uint32_t address,
+DFUUTILS_API int32_t stm32_page_erase( dfu_device_t *device, uint32_t address,
     dfu_bool quiet );
   /* erase a page of memory (provide the page address) */
 
-int32_t stm32_start_app( dfu_device_t *device, dfu_bool quiet,  uint32_t address);
+DFUUTILS_API int32_t stm32_start_app( dfu_device_t *device, dfu_bool quiet,  uint32_t address);
   /* Reset the registers to default reset values and start application
    */
-int32_t stm32_read_block( dfu_device_t *device, size_t xfer_len, uint8_t *buffer );
-int32_t stm32_read_flash( dfu_device_t *device,
+DFUUTILS_API int32_t stm32_read_block( dfu_device_t *device, size_t xfer_len, uint8_t *buffer );
+DFUUTILS_API int32_t stm32_read_flash( dfu_device_t *device,
               intel_buffer_in_t *buin,
               uint8_t mem_segment,
               const dfu_bool quiet);
@@ -120,8 +120,8 @@ int32_t stm32_read_flash( dfu_device_t *device,
    * stm32_memory_unit_enum.
    */
 
-int32_t stm32_set_address_ptr( dfu_device_t *device, uint32_t address );
-int32_t stm32_write_flash( dfu_device_t *device, intel_buffer_out_t *bout,
+DFUUTILS_API int32_t stm32_set_address_ptr( dfu_device_t *device, uint32_t address );
+DFUUTILS_API int32_t stm32_write_flash( dfu_device_t *device, intel_buffer_out_t *bout,
     const dfu_bool eeprom, const dfu_bool force, const dfu_bool hide_progress );
   /* Flash data from the buffer to the main program memory on the device.
    * buffer contains the data to flash where buffer[0] is aligned with memory
@@ -132,20 +132,20 @@ int32_t stm32_write_flash( dfu_device_t *device, intel_buffer_out_t *bout,
    * eeprom bool tells if you want to flash to eeprom or flash memory
    * hide_progress bool sets whether to display progress
    */
-int32_t stm32_write_block( dfu_device_t *device, size_t xfer_len, uint8_t *buffer );
-int32_t stm32_get_commands( dfu_device_t *device );
+DFUUTILS_API int32_t stm32_write_block( dfu_device_t *device, size_t xfer_len, uint8_t *buffer );
+DFUUTILS_API int32_t stm32_get_commands( dfu_device_t *device );
   /* @brief get the commands list, should be length 4
    * @param device pointer
    * @retrn 0 on success
    */
 
-int32_t stm32_get_configuration( dfu_device_t *device );
+DFUUTILS_API int32_t stm32_get_configuration( dfu_device_t *device );
   /* @brief get the configuration structure
    * @param device pointer
    * @retrn 0 on success, negative for error
    */
 
-int32_t stm32_read_unprotect( dfu_device_t *device, dfu_bool quiet );
+DFUUTILS_API int32_t stm32_read_unprotect( dfu_device_t *device, dfu_bool quiet );
   /* @brief unprotect the device (triggers a mass erase)
    * @param device pointer
    * @retrn 0 on success

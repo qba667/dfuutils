@@ -51,7 +51,8 @@ int debug = 0;
 // ________  P R O T O T Y P E S  _______________________________
 static int32_t dfu_find_interface( struct libusb_device *device,
                                    const dfu_bool honor_interfaceclass,
-                                   const uint8_t bNumConfigurations);
+                                   const uint8_t bNumConfigurations,
+								   const uint32_t altSettingsStart);
 /*  Used to find the dfu interface for a device if there is one.
  *
  *  device - the device to search
@@ -327,7 +328,8 @@ struct libusb_device *dfu_device_init( libusb_context *usbcontext, const uint32_
                                        const uint32_t device_address,
                                        dfu_device_t *dfu_device,
                                        const dfu_bool initial_abort,
-                                       const dfu_bool honor_interfaceclass ) {
+                                       const dfu_bool honor_interfaceclass,
+									   const uint32_t altSettingsStart) {
     libusb_device **list;
     size_t i,devicecount;
     int32_t retries = 4;
@@ -365,7 +367,8 @@ retry:
              * let's try to find the DFU interface, open the device
              * and claim it. */
             tmp = dfu_find_interface( device, honor_interfaceclass,
-                                      descriptor.bNumConfigurations );
+                                      descriptor.bNumConfigurations, 
+									  altSettingsStart);
 
             if( 0 <= tmp ) {    /* The interface is valid. */
                 dfu_device->interface = tmp;
@@ -416,9 +419,10 @@ retry:
 
 static int32_t dfu_find_interface( struct libusb_device *device,
                                    const dfu_bool honor_interfaceclass,
-                                   const uint8_t bNumConfigurations) {
+                                   const uint8_t bNumConfigurations, 
+								   const uint32_t altSettingsStart) {
     int32_t c,i,s;
-
+	s = altSettingsStart;
     TRACE( "%s()\n", __FUNCTION__ );
 
     /* Loop through all of the configurations */

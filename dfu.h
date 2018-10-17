@@ -30,6 +30,7 @@ extern "C" {
 #include <stdarg.h>
 #include "intel_hex.h"
 
+
 #define USB_CLASS_APP_SPECIFIC  0xfe
 #define DFU_SUBCLASS            0x01
 
@@ -80,8 +81,12 @@ typedef struct {
 	uint32_t bwPollTimeout:24;
 	uint8_t bState;
 	uint8_t iString;
-} __attribute__((packed)) dfu_status_t;
-
+}
+#ifdef _MSC_VER
+dfu_status_t;
+#else
+__attribute__((packed)) dfu_status_t;
+#endif
 typedef struct {
     struct libusb_device_handle *handle;
     int32_t interface;
@@ -95,19 +100,19 @@ typedef enum {
 } dfu_bool;
 */
 
-void dfu_debug( const char *file, const char *function, const int line,   const int level, const char *format, ... );
+DFUUTILS_API void dfu_debug( const char *file, const char *function, const int line,   const int level, const char *format, ... );
 
-void dfu_set_transaction_num( uint16_t newnum );
+DFUUTILS_API void dfu_set_transaction_num( uint16_t newnum );
 /* set / reset the wValue parameter to a given value. this number is
  * significant for stm32 device commands (see dfu-device.h)
  */
 
-uint16_t dfu_get_transaction_num( void );
+DFUUTILS_API uint16_t dfu_get_transaction_num( void );
 /* get the current transaction number (can be used to calculate address
  * offset for stm32 devices --- see dfu-device.h)
  */
 
-int32_t dfu_detach( dfu_device_t *device, const int32_t timeout );
+DFUUTILS_API int32_t dfu_detach( dfu_device_t *device, const int32_t timeout );
 /*  DFU_DETACH Request (DFU Spec 1.0, Section 5.1)
  *
  *  device    - the dfu device to commmunicate with
@@ -117,7 +122,7 @@ int32_t dfu_detach( dfu_device_t *device, const int32_t timeout );
  *  returns 0 or < 0 on error
  */
 
-int32_t dfu_download( dfu_device_t *device, const size_t length, uint8_t* data );
+DFUUTILS_API int32_t dfu_download( dfu_device_t *device, const size_t length, uint8_t* data );
 /*  DFU_DNLOAD Request (DFU Spec 1.0, Section 6.1.1)
  *
  *  device    - the dfu device to commmunicate with
@@ -128,7 +133,7 @@ int32_t dfu_download( dfu_device_t *device, const size_t length, uint8_t* data )
  *  returns the number of bytes written or < 0 on error
  */
 
-int32_t dfu_upload( dfu_device_t *device, const size_t length, uint8_t* data );
+DFUUTILS_API int32_t dfu_upload( dfu_device_t *device, const size_t length, uint8_t* data );
 /*  DFU_UPLOAD Request (DFU Spec 1.0, Section 6.2)
  *
  *  device    - the dfu device to commmunicate with
@@ -139,7 +144,7 @@ int32_t dfu_upload( dfu_device_t *device, const size_t length, uint8_t* data );
  *  returns the number of bytes received or < 0 on error
  */
 
-int32_t dfu_get_status( dfu_device_t *device, dfu_status_t *status );
+DFUUTILS_API int32_t dfu_get_status( dfu_device_t *device, dfu_status_t *status );
 /*  DFU_GETSTATUS Request (DFU Spec 1.0, Section 6.1.2)
  *
  *  device    - the dfu device to commmunicate with
@@ -148,7 +153,7 @@ int32_t dfu_get_status( dfu_device_t *device, dfu_status_t *status );
  *  return the 0 if successful or < 0 on an error
  */
 
-int32_t dfu_clear_status( dfu_device_t *device );
+DFUUTILS_API int32_t dfu_clear_status( dfu_device_t *device );
 /*  DFU_CLRSTATUS Request (DFU Spec 1.0, Section 6.1.3)
  *
  *  device    - the dfu device to commmunicate with
@@ -156,7 +161,7 @@ int32_t dfu_clear_status( dfu_device_t *device );
  *  return 0 or < 0 on an error
  */
 
-int32_t dfu_get_state( dfu_device_t *device );
+DFUUTILS_API int32_t dfu_get_state( dfu_device_t *device );
 /*  DFU_GETSTATE Request (DFU Spec 1.0, Section 6.1.5)
  *
  *  device    - the dfu device to commmunicate with
@@ -164,20 +169,21 @@ int32_t dfu_get_state( dfu_device_t *device );
  *  returns the state or < 0 on error
  */
 
-int32_t dfu_device_exists( libusb_context *usbcontext,
+DFUUTILS_API int32_t dfu_device_exists( libusb_context *usbcontext,
                            const uint32_t vendor,
                            const uint32_t product,
                            const uint32_t bus_number,
                            const uint32_t device_address);
 
-struct libusb_device *dfu_device_init( libusb_context *usbcontext,
+DFUUTILS_API struct libusb_device *dfu_device_init( libusb_context *usbcontext,
                                        const uint32_t vendor,
                                        const uint32_t product,
                                        const uint32_t bus,
                                        const uint32_t dev_addr,
                                        dfu_device_t *device,
                                        const dfu_bool initial_abort,
-                                       const dfu_bool honor_interfaceclass );
+                                       const dfu_bool honor_interfaceclass,
+									   const uint32_t altSettingsStart);
 /*  dfu_device_init is designed to find one of the usb devices which match
  *  the vendor and product parameters passed in.
  *
@@ -188,14 +194,14 @@ struct libusb_device *dfu_device_init( libusb_context *usbcontext,
  *  return a pointer to the usb_device if found, or NULL otherwise
  */
 
-int32_t dfu_abort( dfu_device_t *device );
+DFUUTILS_API int32_t dfu_abort( dfu_device_t *device );
 /*  DFU_ABORT Request (DFU Spec 1.0, Section 6.1.4)
  *
  *  device    - the dfu device to commmunicate with
  *
  *  returns 0 or < 0 on an error
  */
-char* dfu_status_to_string( const int32_t status );
+DFUUTILS_API char* dfu_status_to_string( const int32_t status );
 /*  Used to convert the DFU status to a string.
  *
  *  status - the status to convert
@@ -203,14 +209,14 @@ char* dfu_status_to_string( const int32_t status );
  *  returns the status name or "unknown status"
  */
 
-char* dfu_state_to_string( const int32_t state );
+DFUUTILS_API char* dfu_state_to_string( const int32_t state );
 /*  Used to convert the DFU state to a string.
  *
  *  state - the state to convert
  *
  *  returns the state name or "unknown state"
  */
-int32_t dfu_make_idle( dfu_device_t *device, const dfu_bool initial_abort );
+DFUUTILS_API int32_t dfu_make_idle( dfu_device_t *device, const dfu_bool initial_abort );
 
 #if defined(__cplusplus)
 } /* extern "C" */
