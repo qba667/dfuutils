@@ -8,7 +8,6 @@
 #include "dfu-bool.h"
 #include "dfu.h"
 #include "stm32mem.h"
-#include "stdafx.h"
 
 
 //___ M A C R O S   ( P R I V A T E ) ________________________________________
